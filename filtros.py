@@ -27,7 +27,7 @@ def aplicar_mascara(imagem, mascara_matriz: list[list[int]], mascara_razao: int)
                 + mascara_matriz[2][1] * imagem[i + 1][j]
                 + mascara_matriz[2][2] * imagem[i + 1][j + 1]
             )
-
-            nova_matriz[i][j] = round(novo_valor * mascara_razao)
+            novo_valor = max(0, round(novo_valor * mascara_razao))
+            nova_matriz[i][j] = novo_valor
 
     return np.matrix(nova_matriz).astype(np.uint8)
