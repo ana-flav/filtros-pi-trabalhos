@@ -20,9 +20,9 @@ def verificar_mascara_laplaciana(mascara):
 
     laplaciano_8_vizinhos_neg = np.array([[1, 1, 1], [1, -8, 1], [1, 1, 1]])
 
-    laplaciano_4_vizinhos_pos = np.array([[0, 1, 0], [1, 4, 1], [0, 1, 0]])
+    laplaciano_4_vizinhos_pos = np.array([[0, -1, 0], [-1, 4, -1], [0, -1, 0]])
 
-    laplaciano_8_vizinhos_pos = np.array([[1, 1, 1], [1, 8, 1], [1, 1, 1]])
+    laplaciano_8_vizinhos_pos = np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
 
     return (
         np.array_equal(mascara, laplaciano_4_vizinhos_neg)
@@ -65,14 +65,12 @@ def aplicar_mascara(
             nova_matriz[i][j] = novo_valor
 
     if verificar_mascara_laplaciana(np.array(mascara_matriz)):
-        imagem_original = np.array(imagem, dtype=np.int16)
-        nova_matriz = imagem_original - nova_matriz
+        imagem_original = np.array(imagem, dtype=np.uint32)
+        if mascara_matriz[0][0] > 0:
+            nova_matriz = imagem_original - nova_matriz
 
-        for i in range(linhas):
-            for j in range(colunas):
-                if nova_matriz[i, j] < 0:
-                    nova_matriz[i, j] = 0
-                elif nova_matriz[i, j] > 255:
-                    nova_matriz[i, j] = 255
+            nova_matriz = np.clip(nova_matriz, 0, 255)
+        else:
+            nova_matriz = imagem_original + nova_matriz
 
     return np.matrix(nova_matriz).astype(np.uint8)
