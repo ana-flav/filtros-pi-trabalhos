@@ -1,6 +1,19 @@
 import numpy as np
 
 
+def filtro_gradiente(imagem):
+    sobel_1 = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]]
+    sobel_2 = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]
+
+    resultado_1 = aplicar_mascara(imagem, sobel_1, 1/2)
+    resultado_2 = aplicar_mascara(imagem, sobel_2, 1/3)
+
+    resultado_2 = imagem + resultado_2
+    resultado_1 = imagem + resultado_1
+
+    return resultado_1, resultado_2
+
+
 def aplicar_mascara(imagem, mascara_matriz: list[list[int]], mascara_razao: int):
     imagem = np.array(imagem)
     linhas, colunas = imagem.shape
@@ -27,7 +40,8 @@ def aplicar_mascara(imagem, mascara_matriz: list[list[int]], mascara_razao: int)
                 + mascara_matriz[2][1] * imagem[i + 1][j]
                 + mascara_matriz[2][2] * imagem[i + 1][j + 1]
             )
-            novo_valor = max(0, round(novo_valor * mascara_razao))
+
+            novo_valor = max(0, min(255, round(novo_valor * mascara_razao)))
             nova_matriz[i][j] = novo_valor
 
     return np.matrix(nova_matriz).astype(np.uint8)
